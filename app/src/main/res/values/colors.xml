@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="project_deafult">#B7CFB7</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#FF5F9EA0</color>
@@ -18,5 +19,12 @@
     <color name="g1">#80ADADAD</color>
     <color name="g2">#F2F2F2</color>
     <color name="g3">#B3B3B3</color>
+    <color name="red">#FF0000</color>
+    <color name="light_red">#80FF0000</color>
+
+    <color name="dot_color_event">#FFE397</color> <!-- 이벤트가 있을 때의 색상 -->
+    <color name="dot_color_no_event">#CCE2CB</color> <!-- 이벤트가 없을 때의 색상 -->
+
+    <color name="yellow">#FDF7E7</color>
 
 </resources>

@@ -3,8 +3,8 @@
     <style name="Base.Theme.MySec" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name = "colorPrimary">@color/dark_gray</item>
-        <item name = "android:backgroundTint">@color/white</item>
+        <item name="colorPrimary">@color/dark_gray</item>
+        <item name="android:windowBackground">@color/white</item> <!-- 배경 색상 설정 -->
     </style>
 
     <style name="Theme.MySec" parent="Base.Theme.MySec" />
@@ -31,12 +31,9 @@
         <item name="android:background">@color/trans</item>
     </style>
 
-    <style name="LineView">
-        <item name="android:background">@color/night_background</item>
-    </style>
-
     <style name="NoSelectionBottomNavigationView" parent="Widget.Design.BottomNavigationView">
         <item name="itemIconTint">@android:color/transparent</item>
         <item name="itemTextColor">@android:color/transparent</item>
     </style>
+
 </resources>

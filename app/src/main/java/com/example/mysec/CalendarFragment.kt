@@ -5,35 +5,40 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import androidx.recyclerview.widget.SnapHelper
+import java.util.*
 
-class CalendarFragment : Fragment() {
+class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
 
-    private var pageIndex: Int = 0
+    interface OnMonthChangeListener {
+        fun onMonthChanged(newDate: Date)
+    }
+
+    private lateinit var recyclerView: RecyclerView
     private lateinit var calendarAdapter: CalendarAdapter
+    private var calendar: Calendar = Calendar.getInstance()
+    private var monthChangeListener: OnMonthChangeListener? = null
+    private var userId: String? = null
+    private var dbHelper: DBHelper? = null
 
-    companion object {
-        fun newInstance(pageIndex: Int): CalendarFragment {
-            val fragment = CalendarFragment()
-            val args = Bundle().apply {
-                putInt("pageIndex", pageIndex)
-            }
-            fragment.arguments = args
-            return fragment
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        monthChangeListener = when {
+            context is OnMonthChangeListener -> context
+            parentFragment is OnMonthChangeListener -> parentFragment as OnMonthChangeListener
+            else -> null
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dbHelper = DBHelper(requireContext())
         arguments?.let {
-            pageIndex = it.getInt("pageIndex", 0)
+            userId = it.getString("user_id")
         }
     }
 
@@ -41,36 +46,88 @@ class CalendarFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_calendar, container, false)
-        val recyclerView: RecyclerView = view.findViewById(R.id.calendar_view)
-        val calendarLayout: LinearLayout = view.findViewById(R.id.calendar_layout)
-
-        // 초기 날짜 설정
-        val date = Calendar.getInstance().apply {
-            add(Calendar.MONTH, pageIndex)
-            set(Calendar.DAY_OF_MONTH, 1)
-        }.time
-
-        calendarAdapter = CalendarAdapter(requireContext(), calendarLayout, date)
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 7) // 7 columns for a week
-        recyclerView.adapter = calendarAdapter
-
-        populateCalendar()
-        return view
+        return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
-    private fun populateCalendar() {
-        val startDate = Calendar.getInstance().apply {
-            add(Calendar.MONTH, pageIndex)
-            set(Calendar.DAY_OF_MONTH, 1)
-        }
-        val daysInMonth = startDate.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val dataList = ArrayList<Int>()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        for (day in 1..daysInMonth) {
-            dataList.add(day)
+        recyclerView = view.findViewById(R.id.calendar_view)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 7)
+
+        val snapHelper: SnapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerView)
+
+        val date = Date(arguments?.getLong("date") ?: System.currentTimeMillis())
+        calendar.time = date
+
+        val events = userId?.let { dbHelper?.getAllEvents(it) } ?: emptyList()
+        calendarAdapter = CalendarAdapter(requireContext(), date, events.toMutableList())
+        recyclerView.adapter = calendarAdapter
+
+        calendarAdapter.itemClick = object : CalendarAdapter.ItemClick {
+            override fun onClick(view: View, position: Int, day: Int) {
+                showEventDialog(day)
+            }
         }
-        calendarAdapter.dataList = dataList
-        calendarAdapter.notifyDataSetChanged()
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val snapView = snapHelper.findSnapView(recyclerView.layoutManager)
+                    val position = recyclerView.layoutManager?.getPosition(snapView!!)
+
+                    if (position != null) {
+                        val offset = position % 7
+                        if (offset == 0) {
+                            calendar.add(Calendar.MONTH, -1)
+                        } else {
+                            calendar.add(Calendar.MONTH, 1)
+                        }
+                        calendarAdapter.updateDate(calendar.time)
+                        monthChangeListener?.onMonthChanged(calendar.time)
+                        updateEventList()
+                    }
+                }
+            }
+        })
+
+        updateEventList()
+    }
+
+    companion object {
+        fun newInstance(date: Date): CalendarFragment {
+            val fragment = CalendarFragment()
+            val args = Bundle().apply {
+                putLong("date", date.time)
+            }
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    private fun showEventDialog(day: Int) {
+        val eventDialogFragment = EventDialogFragment.newInstance(calendar.time, day).apply {
+            setOnEventAddedListener(object : EventDialogFragment.OnEventAddedListener {
+                override fun onEventAdded() {
+                    updateEventList()
+                }
+            })
+        }
+        eventDialogFragment.show(parentFragmentManager, eventDialogFragment.tag)
+    }
+
+    private fun updateEventList() {
+        userId?.let {
+            val events = dbHelper?.getAllEvents(it) ?: emptyList()
+            calendarAdapter.updateEvents(events)
+        }
+    }
+
+    override fun onEventAdded() {
+        // Handle any additional logic if needed after an event is added
+        updateEventList()
     }
 }

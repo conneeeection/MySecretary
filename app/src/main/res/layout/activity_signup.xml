@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회원가입"
+            android:textSize="25dp"
+            android:fontFamily="@font/pb"/>
+
+        <LinearLayout
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_marginTop="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/pr"
+                android:text="이름 *"
+                android:textSize="15dp"/>
+
+            <EditText
+                android:id="@+id/name_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:hint="  한글로 입력해주세요."
+                android:inputType="text"
+                android:fontFamily="@font/pr"
+                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/edittext_background"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/pr"
+                android:text="아이디 *"
+                android:textSize="15dp"/>
+
+            <LinearLayout
+                android:layout_width="320dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/id_field"
+                    android:layout_width="215dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="15dp"
+                    android:hint="  아이디 입력(6~15자)"
+                    android:inputType="text"
+                    android:fontFamily="@font/pr"
+                    android:padding="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/edittext_background"/>
+
+                <Button
+                    android:id="@+id/btnCheckId_Reg"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/light_grey"
+                    android:fontFamily="@font/pr"
+                    android:text="중복확인"
+                    android:textColor="@color/black"
+                    android:textSize="13dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/pr"
+                android:text="비밀번호 *"
+                android:textSize="15dp"/>
+
+            <EditText
+                android:id="@+id/password_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:hint="  비밀번호 입력(영문/숫자 조합 8~15자)"
+                android:inputType="textPassword"
+                android:fontFamily="@font/pr"
+                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edittext_background"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/pr"
+                android:text="비밀번호 확인 * "
+                android:textSize="15dp"/>
+
+            <EditText
+                android:id="@+id/password_check_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:hint="  비밀번호를 한 번 더 입력해주세요."
+                android:inputType="textPassword"
+                android:fontFamily="@font/pr"
+                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edittext_background"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/signup_button"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:text="회원가입"
+            android:backgroundTint="@color/light_grey"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</LinearLayout>
