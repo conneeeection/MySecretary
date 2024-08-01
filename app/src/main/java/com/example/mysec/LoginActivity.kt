@@ -35,11 +35,11 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 try {
                     val isValidUser = db?.checkUserpass(user, pass) ?: false
+                    // 로그인 성공 시 Toast를 띄우고 MainActivity로 전환
                     if (isValidUser) {
-                        // 로그인 성공 시 사용자 ID 저장
-                        UserUtils.saveUserId(this, user)
                         Toast.makeText(this, "로그인 되었습니다.", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainActivity::class.java)
+                        intent.putExtra(MainActivity.ARG_USER_ID, user) // 사용자 ID 전달
                         startActivity(intent)
                         finish() // 현재 액티비티 종료
                     } else {

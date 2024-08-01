@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import java.util.Calendar
 import java.util.Date
 
@@ -77,10 +78,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBNAME, null, 1) {
     // 사용자 정보를 가져오는 함수 (id는 String으로 변경)
     fun getUserInfo(id: String): User? {
         val db = this.readableDatabase
-        val cursor = db.rawQuery(
-            "SELECT * FROM users WHERE id = ?",
-            arrayOf(id)
-        )
+        val cursor = db.rawQuery("SELECT * FROM users WHERE id = ?", arrayOf(id))
+        Log.d("DBHelper", "Executing query for ID: $id") // 쿼리 실행 로그 추가
         var user: User? = null
         if (cursor.moveToFirst()) {
             val userId = cursor.getString(cursor.getColumnIndexOrThrow("id"))
@@ -90,6 +89,14 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBNAME, null, 1) {
         }
         cursor.close()
         return user
+    }
+
+    // 사용자 삭제 메서드 추가
+    fun deleteUser(id: String): Boolean {
+        val db = this.writableDatabase
+        val result = db.delete("users", "id = ?", arrayOf(id))
+        db.close()
+        return result > 0
     }
 
     // 사용자 이름 업데이트

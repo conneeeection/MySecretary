@@ -1,15 +1,12 @@
 package com.example.mysec
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -21,9 +18,14 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+    private var userId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        // 인텐트에서 사용자 ID 가져오기
+        userId = intent.getStringExtra(ARG_USER_ID)
 
         // 툴바 설정
         setSupportActionBar(binding.toolbar)
@@ -36,6 +38,20 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             binding.bottomNavigationView.selectedItemId = R.id.fragment_home
         }
+
+        // 기본 화면 설정
+        if (userId != null) {
+            // 로그인 후 첫 화면으로 기본 홈 화면을 설정
+            if (savedInstanceState == null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_container, HomeFragment())
+                    .commit()
+            }
+        }
+    }
+
+    companion object {
+        const val ARG_USER_ID = "user_id"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -78,9 +94,15 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_mypage -> {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, MypageFragment())
-                    .commit()
+                // 사용자 ID가 있으면 MypageFragment를 추가
+                if (userId != null) {
+                    val fragment = MypageFragment.newInstance(userId!!)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_container, fragment)
+                        .commit()
+                } else {
+                    Toast.makeText(this, "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -20,7 +20,6 @@ class MypageFragment : Fragment() {
     private var userId: String? = null
     private lateinit var nameTextView: TextView
     private lateinit var idTextView: TextView
-    private lateinit var passwordTextView: TextView
     private lateinit var editButton: ImageButton
     private lateinit var saveButton: Button
     private lateinit var logoutButton: Button
@@ -32,6 +31,7 @@ class MypageFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             userId = it.getString(ARG_USER_ID)
+            Log.d(TAG, "User ID: $userId") // ID 확인 로그 추가
         }
         dbHelper = DBHelper(requireContext())
     }
@@ -45,7 +45,6 @@ class MypageFragment : Fragment() {
         // 초기화 시점에서 findViewById 호출
         nameTextView = view.findViewById(R.id.name_text_view)
         idTextView = view.findViewById(R.id.id_text_view)
-        passwordTextView = view.findViewById(R.id.password_text_view)
         editButton = view.findViewById(R.id.edit_button)
         saveButton = view.findViewById(R.id.save_button)
         logoutButton = view.findViewById(R.id.logout_button)
@@ -61,14 +60,12 @@ class MypageFragment : Fragment() {
             val userInfo = dbHelper?.getUserInfo(it)
             Log.d(TAG, "User Info: $userInfo") // 로그 추가
             if (userInfo != null) {
-                nameTextView.text = "이름: ${userInfo.name}"
-                idTextView.text = "아이디: ${userInfo.id}"
-                passwordTextView.text = "비밀번호: ${userInfo.password}"
+                nameTextView.text = "${userInfo.name}"
+                idTextView.text = "${userInfo.id}"
             } else {
                 // userInfo가 null인 경우 처리
-                nameTextView.text = "이름: 정보 없음"
-                idTextView.text = "아이디: 정보 없음"
-                passwordTextView.text = "비밀번호: 정보 없음"
+                nameTextView.text = "정보 없음"
+                idTextView.text = "정보 없음"
             }
         }
 
@@ -77,7 +74,7 @@ class MypageFragment : Fragment() {
             Log.d(TAG, "Edit Button Clicked") // 클릭 로그 추가
             nameTextView.visibility = View.GONE
             nameEditText.visibility = View.VISIBLE
-            nameEditText.setText(nameTextView.text.toString().removePrefix("이름: "))
+            nameEditText.setText(nameTextView.text.toString())
             saveButton.visibility = View.VISIBLE
         }
 
@@ -88,10 +85,10 @@ class MypageFragment : Fragment() {
             userId?.let {
                 val updated = dbHelper?.updateUserName(it, newName) ?: false
                 if (updated) {
-                    nameTextView.text = "이름: $newName"
+                    nameTextView.text = "${newName}"
                     nameEditText.visibility = View.GONE
                     nameTextView.visibility = View.VISIBLE
-                    saveButton.visibility = View.GONE
+                    saveButton.visibility = View.INVISIBLE
                 } else {
                     Log.e(TAG, "Failed to update user name")
                 }
@@ -107,7 +104,7 @@ class MypageFragment : Fragment() {
         }
 
         // 회원 탈퇴 버튼 클릭 리스너 설정
-        /*quitButton.setOnClickListener {
+        quitButton.setOnClickListener {
             Log.d(TAG, "Quit Button Clicked") // 클릭 로그 추가
             userId?.let {
                 val deleted = dbHelper?.deleteUser(it) ?: false
@@ -119,7 +116,7 @@ class MypageFragment : Fragment() {
                     Log.e(TAG, "Failed to delete user")
                 }
             }
-        }*/
+        }
 
         return view
     }
