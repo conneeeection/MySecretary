@@ -18,5 +18,8 @@
     <color name="g1">#80ADADAD</color>
     <color name="g2">#F2F2F2</color>
     <color name="g3">#B3B3B3</color>
+    <color name="project_deafult">#B7CFB7</color>
+    <color name="projectList_color">#DFDFDF</color>
+    <color name="default_lightGreen">#CCE2CB</color>
 
 </resources>

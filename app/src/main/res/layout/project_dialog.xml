@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/project_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!--    프로젝트 추가 버튼    -->
+        <android.widget.Button
+            android:id="@+id/plus_btn"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
+            android:background="@drawable/plus"
+            android:text=""/>
+
+        <!--    프로젝트 버튼    -->
+        <android.widget.Button
+            android:id="@+id/project_btn"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
+            android:fontFamily="@font/pb"
+            android:layout_marginLeft="16dp"
+            android:text=""
+            android:hint="프로젝트"
+            android:background="@drawable/round_button" />
+
+        <ListView
+            android:id="@+id/project_buttons_container"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+    </LinearLayout>
+
+    <!--  프로젝트 제목  -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+
+        <!--   배경 이미지     -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/radius_btn"
+            app:tint="@color/default_lightGreen"/>
+
+        <!--    텍스트 오버레이    -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!--      프로젝트 제목      -->
+            <TextView
+                android:id="@+id/project_title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/pb"
+                android:hint="프로젝트 제목"
+                android:paddingTop="8dp"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <!--      프로젝트 기간      -->
+            <TextView
+                android:id="@+id/project_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/pr"
+                android:hint="프로젝트 기간"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:paddingBottom="8dp"/>
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!--  일정 리스트  -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/radius_btn"
+        android:backgroundTint="@color/light_grey"
+        android:minHeight="128dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pb"
+            android:paddingTop="10dp"
+            android:paddingLeft="17dp"
+            android:text="일정 리스트"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_newWork"
+            android:layout_width="337dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/white"
+            android:text="+ 새 일정 만들기"
+            android:textSize="16sp"
+            android:textColor="@color/g3"
+            app:cornerRadius="10dp" />
+
+
+        <ListView
+            android:id="@+id/project_container"
+            android:layout_width="337dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/project_background"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

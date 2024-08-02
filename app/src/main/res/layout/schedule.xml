@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/schedule_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!--  팝업창 제목  -->
+    <TextView
+        android:id="@+id/createProject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pb"
+        android:text="일정 입력"
+        android:paddingVertical="5dp"
+        android:layout_marginBottom="20dp"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingHorizontal="10dp"
+        android:layout_marginBottom="7dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/color_circle"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/baseline_drive_file_rename_outline_24" />
+
+        <!--  프로젝트 제목 입력  -->
+        <EditText
+            android:id="@+id/editTextInput2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/pb"
+            android:hint="제목을 입력하세요"
+            android:backgroundTint="@color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingHorizontal="10dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/onoff_icon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/baseline_airplay_24" />
+
+
+        <!--  대면/비대면 여부  -->
+        <TextView
+            android:id="@+id/onoff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/pr"
+            android:text="대면/비대면 여부"
+            android:textSize="16sp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+
+
+    <!--  대면/비대면 여부  라디오 버튼 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="45dp"
+        android:orientation="horizontal">
+
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/onBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:fontFamily="@font/pr"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="대면" />
+
+            <RadioButton
+                android:id="@+id/offBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="15dp"
+                android:fontFamily="@font/pr"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="비대면" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/projectDateRange"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/baseline_calendar_month_24" />
+
+        <!--  프로젝트 기간  -->
+        <TextView
+            android:id="@+id/projectDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/pr"
+            android:text="기간 설정"
+            android:textSize="16sp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+
+    <!--  프로젝트 기간(시작일 & 종료일)선택  -->
+    <Button
+        android:id="@+id/select_date_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="28dp"
+        android:fontFamily="@font/pr"
+        android:text="날짜 선택하기   ▶"
+        android:backgroundTint="@color/white"
+        android:textSize="16sp"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/date_range_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="51dp"
+        android:hint="선택된 날짜 범위"
+        android:fontFamily="@font/pb"
+        android:textSize="16sp"
+        android:layout_marginTop="7dp"/>
+
+
+
+    <!--  생성하기 버튼  -->
+    <Button
+        android:id="@+id/btn_create2"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/light_grey"
+        android:text="추가하기"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pr"/>
+
+</LinearLayout>
