@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -64,7 +63,7 @@ class EventDialogFragment : DialogFragment() {
         val date = arguments?.getSerializable(ARG_DATE) as Date
         val day = arguments?.getInt(ARG_DAY) ?: 1
 
-        // 달력 날짜를 설정
+        // 현재 달력의 월을 확인하여 올바른 날짜를 설정합니다.
         val calendar = Calendar.getInstance().apply {
             time = date
             set(Calendar.DAY_OF_MONTH, day)
@@ -79,14 +78,22 @@ class EventDialogFragment : DialogFragment() {
         eventAdapter = EventAdapter(requireContext(), eventList)
         eventListView.adapter = eventAdapter
 
-        // 예시 데이터 추가
-        // 실제 데이터 로드 방법은 DB 또는 다른 소스에서 데이터를 가져오는 방식으로 변경 필요
-        eventList.add("Example Event 1")
-        eventList.add("Example Event 2")
-        eventAdapter.notifyDataSetChanged()
+        // 선택된 날짜의 이벤트 로드
+        loadEvents(calendar.time)
 
         addEventButton.setOnClickListener {
             showAddEventBottomSheet()
+        }
+    }
+
+    private fun loadEvents(date: Date) {
+        val userId = (parentFragment as? CalendarFragment)?.userId
+        if (userId != null) {
+            val dbHelper = DBHelper(requireContext())
+            val events = dbHelper.getEventsForDate(userId, date.time)
+            eventList.clear()
+            eventList.addAll(events)
+            eventAdapter.notifyDataSetChanged()
         }
     }
 

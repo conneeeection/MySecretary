@@ -132,6 +132,52 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBNAME, null, 1) {
         return events
     }
 
+    // 특정 날짜에 대한 이벤트 가져오기
+    fun getEventsForDate(userId: String, date: Long): List<String> {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT event FROM events WHERE user_id = ? AND event_date BETWEEN ? AND ?",
+            arrayOf(
+                userId,
+                getStartOfDay(date).toString(),
+                getEndOfDay(date).toString()
+            )
+        )
+        val events = mutableListOf<String>()
+        if (cursor.moveToFirst()) {
+            do {
+                val event = cursor.getString(cursor.getColumnIndexOrThrow("event"))
+                events.add(event)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return events
+    }
+
+    // 날짜의 시작 시간을 밀리초로 가져오기
+    private fun getStartOfDay(dateMillis: Long): Long {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = dateMillis
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        return calendar.timeInMillis
+    }
+
+    // 날짜의 끝 시간을 밀리초로 가져오기
+    private fun getEndOfDay(dateMillis: Long): Long {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = dateMillis
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }
+        return calendar.timeInMillis
+    }
+
     companion object {
         private const val DBNAME = "Mybiseo.db" // 데이터베이스 이름을 Mybiseo.db로 변경
     }

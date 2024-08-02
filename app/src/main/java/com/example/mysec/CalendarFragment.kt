@@ -22,7 +22,7 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
     private lateinit var calendarAdapter: CalendarAdapter
     private var calendar: Calendar = Calendar.getInstance()
     private var monthChangeListener: OnMonthChangeListener? = null
-    private var userId: String? = null
+    internal var userId: String? = null
     private var dbHelper: DBHelper? = null
 
     override fun onAttach(context: Context) {
@@ -80,12 +80,16 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
                     val position = recyclerView.layoutManager?.getPosition(snapView!!)
 
                     if (position != null) {
-                        val offset = position % 7
-                        if (offset == 0) {
-                            calendar.add(Calendar.MONTH, -1)
+                        // 스크롤 위치에 따라 현재 달을 업데이트
+                        val currentMonthOffset = position / 7 // 현재 월의 오프셋을 계산
+                        val previousMonthOffset = (position - 1) / 7
+                        val newMonth = if (currentMonthOffset > previousMonthOffset) {
+                            calendar.get(Calendar.MONTH) + 1
                         } else {
-                            calendar.add(Calendar.MONTH, 1)
+                            calendar.get(Calendar.MONTH) - 1
                         }
+                        calendar.set(Calendar.MONTH, newMonth)
+                        calendar.set(Calendar.DATE, 1) // 첫째 날로 설정
                         calendarAdapter.updateDate(calendar.time)
                         monthChangeListener?.onMonthChanged(calendar.time)
                         updateEventList()
@@ -109,7 +113,14 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
     }
 
     private fun showEventDialog(day: Int) {
-        val eventDialogFragment = EventDialogFragment.newInstance(calendar.time, day).apply {
+        // 현재 Calendar 객체에서 날짜를 계산하여 올바른 월을 설정합니다.
+        val selectedDate = Calendar.getInstance().apply {
+            time = calendar.time
+            set(Calendar.DAY_OF_MONTH, day)
+        }.time
+
+        // EventDialogFragment에 선택된 날짜와 일자를 전달합니다.
+        val eventDialogFragment = EventDialogFragment.newInstance(selectedDate, day).apply {
             setOnEventAddedListener(object : EventDialogFragment.OnEventAddedListener {
                 override fun onEventAdded() {
                     updateEventList()
