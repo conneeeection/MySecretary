@@ -1,12 +1,15 @@
 package com.example.mysec
 
 import android.R
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import com.example.mysec.databinding.ProjectDialogBinding
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +24,6 @@ class ProjectFragment : Fragment() {
     // 프로젝트 저장을 위한 Repository 인스턴스
     private lateinit var projectRepository: ProjectRepository
     private lateinit var scheduleDatabaseHelper: ScheduleDatabaseHelper
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,10 +82,28 @@ class ProjectFragment : Fragment() {
             scheduleDialog.show(parentFragmentManager, "ScheduleDialogFragment")
         }
 
+        // 공유 버튼 클릭 리스너 추가
+        binding?.shareBtn?.setOnClickListener {
+            shareApp()
+        }
+
         updateScheduleList()
 
         return binding?.root
     }
+
+    // 앱 공유 기능 메서드
+    private fun shareApp() {
+        val testLink = "https://github.com/conneeeection/MySecretary" // 테스트용 배포 링크
+        val shareIntent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "프로젝트 일정 공유해요! 다음 링크에서 다운로드할 수 있습니다!: $testLink")
+            putExtra(Intent.EXTRA_TITLE, "프로젝트 일정 공유해요!")
+        }
+        // 사용자가 선택할 수 있는 앱 목록을 제공하여 공유 화면을 시작
+        startActivity(Intent.createChooser(shareIntent, "Share test link using"))
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
