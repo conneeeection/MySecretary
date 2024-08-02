@@ -53,6 +53,8 @@ dependencies {
     // 날씨 정보
     implementation("com.loopj.android:android-async-http:1.4.11")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -63,12 +65,7 @@ dependencies {
     // 네이버 지도 위치 추적
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
-
-    // Add the dependency for the Firebase Authentication library
-    implementation("com.google.firebase:firebase-auth-ktx")
-
+    // ViewModel 및 LiveData 관련 종속성
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 }

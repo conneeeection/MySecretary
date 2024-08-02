@@ -62,7 +62,10 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
         calendar.time = date
 
         val events = userId?.let { dbHelper?.getAllEvents(it) } ?: emptyList()
-        calendarAdapter = CalendarAdapter(requireContext(), date, events.toMutableList())
+        userId?.let {
+            calendarAdapter = CalendarAdapter(requireContext(), date, events.toMutableList(), it)
+        }
+
         recyclerView.adapter = calendarAdapter
 
         calendarAdapter.itemClick = object : CalendarAdapter.ItemClick {
@@ -80,8 +83,7 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
                     val position = recyclerView.layoutManager?.getPosition(snapView!!)
 
                     if (position != null) {
-                        // 스크롤 위치에 따라 현재 달을 업데이트
-                        val currentMonthOffset = position / 7 // 현재 월의 오프셋을 계산
+                        val currentMonthOffset = position / 7
                         val previousMonthOffset = (position - 1) / 7
                         val newMonth = if (currentMonthOffset > previousMonthOffset) {
                             calendar.get(Calendar.MONTH) + 1
@@ -89,7 +91,7 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
                             calendar.get(Calendar.MONTH) - 1
                         }
                         calendar.set(Calendar.MONTH, newMonth)
-                        calendar.set(Calendar.DATE, 1) // 첫째 날로 설정
+                        calendar.set(Calendar.DATE, 1)
                         calendarAdapter.updateDate(calendar.time)
                         monthChangeListener?.onMonthChanged(calendar.time)
                         updateEventList()
@@ -102,15 +104,17 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
     }
 
     companion object {
-        fun newInstance(date: Date): CalendarFragment {
+        fun newInstance(date: Date, userId: String): CalendarFragment {
             val fragment = CalendarFragment()
             val args = Bundle().apply {
                 putLong("date", date.time)
+                putString("user_id", userId)  // userId를 추가합니다.
             }
             fragment.arguments = args
             return fragment
         }
     }
+
 
     private fun showEventDialog(day: Int) {
         // 현재 Calendar 객체에서 날짜를 계산하여 올바른 월을 설정합니다.
@@ -120,12 +124,8 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
         }.time
 
         // EventDialogFragment에 선택된 날짜와 일자를 전달합니다.
-        val eventDialogFragment = EventDialogFragment.newInstance(selectedDate, day).apply {
-            setOnEventAddedListener(object : EventDialogFragment.OnEventAddedListener {
-                override fun onEventAdded() {
-                    updateEventList()
-                }
-            })
+        val eventDialogFragment = EventDialogFragment.newInstance(selectedDate, day, userId!!).apply {
+            setOnEventAddedListener(this@CalendarFragment)
         }
         eventDialogFragment.show(parentFragmentManager, eventDialogFragment.tag)
     }
@@ -134,6 +134,10 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
         userId?.let {
             val events = dbHelper?.getAllEvents(it) ?: emptyList()
             calendarAdapter.updateEvents(events)
+            recyclerView.post {
+                recyclerView.adapter?.notifyDataSetChanged()
+                recyclerView.requestLayout() // 레이아웃 요청
+            }
         }
     }
 

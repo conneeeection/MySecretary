@@ -3,6 +3,7 @@ package com.example.mysec
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,12 +21,14 @@ class EventDialogFragment : DialogFragment() {
     companion object {
         private const val ARG_DATE = "date"
         private const val ARG_DAY = "day"
+        private const val ARG_USER_ID = "user_id"
 
-        fun newInstance(date: Date, day: Int): EventDialogFragment {
+        fun newInstance(date: Date, day: Int, userId: String): EventDialogFragment {
             val fragment = EventDialogFragment()
             val args = Bundle().apply {
                 putSerializable(ARG_DATE, date)
                 putInt(ARG_DAY, day)
+                putString(ARG_USER_ID, userId)
             }
             fragment.arguments = args
             return fragment
@@ -34,10 +37,16 @@ class EventDialogFragment : DialogFragment() {
 
     private var onEventAddedListener: OnEventAddedListener? = null
     private lateinit var eventAdapter: EventAdapter
-    private val eventList = mutableListOf<String>()
+    private val eventList = mutableListOf<Event>()
+    private var userId: String? = null
 
     interface OnEventAddedListener {
         fun onEventAdded()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onEventAddedListener = parentFragment as? OnEventAddedListener
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -62,57 +71,73 @@ class EventDialogFragment : DialogFragment() {
 
         val date = arguments?.getSerializable(ARG_DATE) as Date
         val day = arguments?.getInt(ARG_DAY) ?: 1
+        userId = arguments?.getString(ARG_USER_ID)
 
-        // 현재 달력의 월을 확인하여 올바른 날짜를 설정합니다.
         val calendar = Calendar.getInstance().apply {
             time = date
             set(Calendar.DAY_OF_MONTH, day)
         }
 
-        // 날짜를 포맷팅하여 텍스트 뷰에 설정
         val dateFormat = SimpleDateFormat("M월 d일 (E)", Locale.getDefault())
         val formattedDate = dateFormat.format(calendar.time)
         dateTextView.text = formattedDate
 
-        // 어댑터 설정
-        eventAdapter = EventAdapter(requireContext(), eventList)
+        // 삭제 클릭 리스너를 추가합니다.
+        eventAdapter = EventAdapter(requireContext(), eventList) { event ->
+            deleteEvent(event)
+        }
         eventListView.adapter = eventAdapter
 
-        // 선택된 날짜의 이벤트 로드
         loadEvents(calendar.time)
 
         addEventButton.setOnClickListener {
-            showAddEventBottomSheet()
+            showAddEventBottomSheet(calendar.time)
         }
     }
 
     private fun loadEvents(date: Date) {
-        val userId = (parentFragment as? CalendarFragment)?.userId
-        if (userId != null) {
+        userId?.let {
             val dbHelper = DBHelper(requireContext())
-            val events = dbHelper.getEventsForDate(userId, date.time)
+            val events = dbHelper.getEventsForDate(it, date.time)
+            Log.d("EventDialogFragment", "Loaded events: $events")
             eventList.clear()
             eventList.addAll(events)
-            eventAdapter.notifyDataSetChanged()
-        }
+            eventAdapter.updateEvents(eventList) // 어댑터의 데이터 갱신
+        } ?: Log.e("EventDialogFragment", "User ID is null")
     }
 
-    private fun showAddEventBottomSheet() {
+    private fun showAddEventBottomSheet(date: Date) {
         val bottomSheetFragment = AddEventBottomSheetFragment().apply {
             setOnEventAddedListener(object : AddEventBottomSheetFragment.OnEventAddedListener {
                 override fun onEventAdded(event: String) {
-                    eventList.add(event)
-                    eventAdapter.notifyDataSetChanged()
-                    onEventAddedListener?.onEventAdded()
+                    userId?.let {
+                        val dbHelper = DBHelper(requireContext())
+                        val success = dbHelper.addEvent(it, date, event)
+                        if (success) {
+                            Log.d("EventDialogFragment", "Event added: $event")
+                            loadEvents(date) // 새로 추가된 일정을 로드
+                            onEventAddedListener?.onEventAdded()
+                        } else {
+                            Log.e("EventDialogFragment", "Failed to add event: $event")
+                        }
+                    }
                 }
             })
         }
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        onEventAddedListener = targetFragment as? OnEventAddedListener
+    private fun deleteEvent(event: Event) {
+        userId?.let {
+            val dbHelper = DBHelper(requireContext())
+            val success = dbHelper.deleteEvent(it, event) // Event 객체 전달
+            if (success) {
+                Log.d("EventDialogFragment", "Event deleted: ${event.event}") // 디버깅 로그 추가
+                loadEvents(arguments?.getSerializable(ARG_DATE) as Date) // 삭제 후 일정을 새로 로드
+            } else {
+                Log.e("EventDialogFragment", "Failed to delete event: ${event.event}") // 실패 로그 추가
+            }
+        }
     }
 
     override fun onStart() {

@@ -13,12 +13,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var editTextPassword: EditText
     private lateinit var btnSignup: Button
     private var db: DBHelper? = null
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         db = DBHelper(this)
+        sessionManager = SessionManager(this)
 
         btnLogin = findViewById(R.id.login_button)
         editTextId = findViewById(R.id.editTextId)
@@ -37,6 +39,9 @@ class LoginActivity : AppCompatActivity() {
                     val isValidUser = db?.checkUserpass(user, pass) ?: false
                     // 로그인 성공 시 Toast를 띄우고 MainActivity로 전환
                     if (isValidUser) {
+                        // 세션 생성
+                        sessionManager.createLoginSession(user)
+
                         Toast.makeText(this, "로그인 되었습니다.", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainActivity::class.java)
                         intent.putExtra(MainActivity.ARG_USER_ID, user) // 사용자 ID 전달

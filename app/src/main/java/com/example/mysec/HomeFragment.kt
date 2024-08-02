@@ -98,7 +98,7 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
     }
 
     private fun initView() {
-        val calendarPageAdapter = CalendarPageAdapter(this)
+        val calendarPageAdapter = CalendarPageAdapter(this, "userId") // userId를 전달
         viewPager.adapter = calendarPageAdapter
         viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         viewPager.setCurrentItem(CalendarPageAdapter.START_POSITION, false)

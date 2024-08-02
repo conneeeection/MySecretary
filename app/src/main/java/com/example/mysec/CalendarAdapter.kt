@@ -14,7 +14,8 @@ import java.util.*
 class CalendarAdapter(
     private val context: Context,
     private var date: Date,
-    private var events: MutableList<Event>
+    private var events: MutableList<Event>,
+    private val userId: String // userId를 추가
 ) : RecyclerView.Adapter<CalendarAdapter.CalendarItemHolder>() {
 
     private var dataList: ArrayList<Int> = arrayListOf()
@@ -35,7 +36,7 @@ class CalendarAdapter(
     fun updateEvents(newEvents: List<Event>) {
         events.clear()
         events.addAll(newEvents)
-        notifyDataSetChanged()
+        notifyDataSetChanged() // Adapter에 데이터 변경을 알림
     }
 
     var itemClick: ItemClick? = null
@@ -48,9 +49,7 @@ class CalendarAdapter(
         val day = dataList[position]
         holder.bind(day, position)
 
-        // 클릭 이벤트 설정
         holder.itemView.setOnClickListener { v ->
-            // 날짜가 이전 달 또는 다음 달일 경우 클릭 이벤트 무시
             val isPreviousMonth = position < dateCalendar.prevTail
             val isNextMonth = position > dataList.size - dateCalendar.nextHead - 1
 
@@ -58,7 +57,6 @@ class CalendarAdapter(
                 return@setOnClickListener
             }
 
-            // 현재 달의 날짜를 클릭한 경우
             itemClick?.onClick(v, position, day)
         }
     }
@@ -87,7 +85,6 @@ class CalendarAdapter(
             val todayYear = currentCalendar.get(Calendar.YEAR)
 
             val isToday = day == todayDay && date.month == todayMonth && date.year + 1900 == todayYear
-            val isCurrentMonth = position in firstDateIndex..lastDateIndex
             val isPreviousMonth = position < firstDateIndex
             val isNextMonth = position > lastDateIndex
             val columnIndex = position % 7
@@ -96,11 +93,11 @@ class CalendarAdapter(
             var textColor = context.getColor(R.color.black)
             var textStyle = Typeface.NORMAL
 
-            // 이전 달 및 다음 달 날짜를 식별하여 색상 설정
             if (isPreviousMonth || isNextMonth) {
                 textColor = if (isWeekend) context.getColor(R.color.light_red) else context.getColor(R.color.light_gray)
                 itemView.isClickable = false
                 itemView.isFocusable = false
+                itemEventIndicator.visibility = View.INVISIBLE // 이전 및 다음 달 날짜에는 점이 보이지 않도록 설정
             } else {
                 itemView.isClickable = true
                 itemView.isFocusable = true
@@ -111,26 +108,31 @@ class CalendarAdapter(
                 } else if (isWeekend) {
                     textColor = context.getColor(R.color.red)
                 }
-            }
 
-            // 이벤트가 있는지 확인
-            val calendar = Calendar.getInstance().apply {
-                set(date.year + 1900, date.month, day)
-            }
-
-            val hasEvent = events.any { event ->
-                val eventDate = Calendar.getInstance().apply {
-                    time = event.date
+                // 현재 달의 날짜인 경우에만 이벤트 점을 표시
+                val calendar = Calendar.getInstance().apply {
+                    set(date.year + 1900, date.month, day)
                 }
-                eventDate.get(Calendar.DAY_OF_MONTH) == day &&
-                        eventDate.get(Calendar.MONTH) == date.month &&
-                        eventDate.get(Calendar.YEAR) == date.year + 1900
-            }
 
-            itemEventIndicator.visibility = if (hasEvent) View.VISIBLE else View.INVISIBLE
+                val hasEvent = events.any { event ->
+                    val eventDate = Calendar.getInstance().apply {
+                        time = event.date
+                    }
+                    eventDate.get(Calendar.DAY_OF_MONTH) == day &&
+                            eventDate.get(Calendar.MONTH) == date.month &&
+                            eventDate.get(Calendar.YEAR) == date.year + 1900
+                }
+
+                itemEventIndicator.visibility = if (hasEvent) View.VISIBLE else View.INVISIBLE
+            }
 
             itemCalendarDateText.setTextColor(textColor)
             itemCalendarDateText.setTypeface(itemCalendarDateText.typeface, textStyle)
+
+            // 데이터가 업데이트된 후 UI를 즉시 갱신
+            itemView.post {
+                itemEventIndicator.visibility = if (itemEventIndicator.visibility == View.VISIBLE) View.VISIBLE else View.INVISIBLE
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.example.mysec.databinding.ActivityMainBinding
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
@@ -106,6 +107,15 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showEventDialog(date: Date, day: Int) {
+        userId?.let { id ->
+            val eventDialogFragment = EventDialogFragment.newInstance(date, day, id)
+            eventDialogFragment.show(supportFragmentManager, "EventDialogFragment")
+        } ?: run {
+            Toast.makeText(this, "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 

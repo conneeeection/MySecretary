@@ -8,7 +8,7 @@ import android.os.Looper
 
 class StartActivity : AppCompatActivity() {
 
-    private val SPLASH_TIME_OUT: Long = 2000 // 2초 후에 다음 화면으로 이동
+    private val SPLASH_TIME_OUT: Long = 3000 // 3초 후에 다음 화면으로 이동
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
