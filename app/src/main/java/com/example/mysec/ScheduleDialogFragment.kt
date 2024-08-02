@@ -134,7 +134,7 @@ class ScheduleDialogFragment : DialogFragment() {
             dismiss()
         }
         else {
-            Toast.makeText(requireContext(), "제목과 기간을 모두 입력하세요.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "내용을 모두 입력하세요.", Toast.LENGTH_SHORT).show()
         }
     }
 
