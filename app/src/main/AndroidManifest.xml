@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MySec"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="3zilu5n71c" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
