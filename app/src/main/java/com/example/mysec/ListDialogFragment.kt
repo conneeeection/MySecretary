@@ -155,7 +155,7 @@ class ListDialogFragment : DialogFragment() {
                         // 프로젝트 삽입
                         projectRepository.insertProject(projectName, projectDateRange, userId!!)
                         showToast("프로젝트가 생성되었습니다")
-                        listener?.onProjectCreated() // Notify project created
+                        listener?.onProjectCreated()
                         dismiss()
 
                         // Activity를 통해 Fragment 표시

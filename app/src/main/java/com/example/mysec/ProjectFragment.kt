@@ -107,12 +107,15 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
                     val projectInitials = withContext(Dispatchers.IO) {
                         projectRepository.getLatestProjectInitials(userId!!)
                     }
+                    Log.d(TAG, "loadProjectDetails: Project Initials = $projectInitials")
                     // 두 글자를 버튼에 출력
                     binding.projectBtn.text = projectInitials ?: "이름"
+
                 } ?: run {
                     // 최신 프로젝트가 없을 경우 기본 값 설정
                     binding.projectTitle.text = "프로젝트 제목"
                     binding.projectDate.text = "프로젝트 날짜"
+                    binding.projectBtn.text = "이름" // 기본 값 설정
                     Log.d(TAG, "loadProjectDetails: No latest project found")
                 }
             } catch (e: CancellationException) {
