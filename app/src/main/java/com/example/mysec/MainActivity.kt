@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity(), ListDialogFragment.OnProjectCreatedLis
         }
     }
 
+    // 헤더 설정
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_navi_menu, menu)
 
@@ -102,6 +103,7 @@ class MainActivity : AppCompatActivity(), ListDialogFragment.OnProjectCreatedLis
         return linearLayout
     }
 
+    // 마이페이지
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_mypage -> {
@@ -121,6 +123,7 @@ class MainActivity : AppCompatActivity(), ListDialogFragment.OnProjectCreatedLis
         }
     }
 
+    // 푸터 설정
     private fun setBottomNavigationView() {
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -212,6 +215,7 @@ class MainActivity : AppCompatActivity(), ListDialogFragment.OnProjectCreatedLis
         }
     }
 
+    // 프로젝트 제목과 기간 넘겨주기 위한 메서드
     fun showProjectFragment(projectName: String, projectDateRange: String) {
         val fragment = ProjectFragment().apply {
             arguments = Bundle().apply {

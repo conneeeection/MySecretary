@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 
+// ArrayAdapter를 상속받아 프로젝트 표시하는 어댑터
 class ProjectAdapter(context: Context, projects: List<Pair<String, String>>) : ArrayAdapter<Pair<String, String>>(context, 0, projects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

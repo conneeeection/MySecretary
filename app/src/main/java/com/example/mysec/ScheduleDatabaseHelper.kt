@@ -34,6 +34,7 @@ class ScheduleDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
         }
     }
 
+    // 일정 리스트 추가
     fun insertSchedule(title: String, dateRange: String, isOnline: Boolean, userId: String): Long {
         val db = this.writableDatabase
         val values = ContentValues().apply {
@@ -45,6 +46,7 @@ class ScheduleDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
         return db.insert(TABLE_NAME, null, values)
     }
 
+    // 일정 리스트 업데이트
     fun updateSchedule(id: Int, title: String, dateRange: String, isOnline: Boolean): Int {
         val db = writableDatabase
         val values = ContentValues().apply {

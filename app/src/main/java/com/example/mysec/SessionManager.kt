@@ -13,19 +13,6 @@ class SessionManager(context: Context) {
         editor.apply()
     }
 
-    fun getUserId(): String? {
-        return prefs.getString(KEY_USER_ID, null)
-    }
-
-    fun isLoggedIn(): Boolean {
-        return getUserId() != null
-    }
-
-    fun logoutUser() {
-        editor.clear()
-        editor.apply()
-    }
-
     companion object {
         private const val PREFS_NAME = "MySecPrefs"
         private const val KEY_USER_ID = "user_id"
