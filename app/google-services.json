@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82949077768",
+    "project_id": "mysecretary-ce21d",
+    "storage_bucket": "mysecretary-ce21d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82949077768:android:bbc47431a04e65b3d48abd",
+        "android_client_info": {
+          "package_name": "com.example.mysec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXjtku2U9fewYQ0-kd4HpGxlYqO4tNiV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

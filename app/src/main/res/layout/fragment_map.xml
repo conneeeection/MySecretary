@@ -18,9 +18,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:backgroundTint="@color/project_deafult"
+        android:backgroundTint="@color/project_default"
         android:text="근처 청년센터"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:fontFamily="@font/pr"/>
 
 </RelativeLayout>

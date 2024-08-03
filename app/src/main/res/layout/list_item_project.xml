@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp"
-    android:gravity="center">
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/project_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="@drawable/project_background"
+        android:paddingLeft="16dp"
+        android:fontFamily="@font/pr"
+        android:text="제목"
+        android:textColor="@color/black"
+        android:textSize="16sp"/>
 
-        <TextView
-            android:id="@+id/project_name"
-            android:layout_width="337dp"
-            android:layout_height="80dp"
-            android:paddingVertical="28dp"
-            android:paddingLeft="16dp"
-            android:fontFamily="@font/pr"
-            android:hint="제목"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:background="@drawable/project_background" />
+    <TextView
+        android:id="@+id/tvDay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="날짜"
+        android:paddingLeft="16dp"
+        android:fontFamily="@font/pr"
+        android:textColor="@color/black"
+        android:textSize="14sp"/>
 
-</RelativeLayout>
+</LinearLayout>

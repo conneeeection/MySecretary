@@ -8,15 +8,13 @@
     android:paddingLeft="20dp"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
-    android:backgroundTint="@color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:backgroundTint="@color/white">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@drawable/background_shape"
-        android:backgroundTint="@color/g2">
+        android:backgroundTint="@color/light_grey">
 
         <LinearLayout
             android:id="@+id/titleLayout"
@@ -26,12 +24,12 @@
 
             <TextView
                 android:id="@+id/calendar_year_month_text"
+                style="@style/month"
                 android:layout_width="240dp"
                 android:layout_height="60dp"
-                android:text="2024년 07월"
-                style="@style/month"
+                android:layout_marginStart="15dp"
                 android:gravity="center_vertical|start"
-                android:layout_marginStart="15dp"/>
+                android:text="2024년 08월" />
 
             <ImageView
                 android:id="@+id/weather_ic"
@@ -46,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="6dp"
-                android:textSize="15sp"
+                android:textSize="15dp"
                 tools:text="00" />
 
         </LinearLayout>
@@ -60,36 +58,36 @@
             android:orientation="horizontal">
 
             <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="일"
-            style="@style/text"/>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="일"
+                style="@style/text"/>
 
             <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="월"
-            style="@style/text"/>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="월"
+                style="@style/text"/>
 
             <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="화"
-            style="@style/text"/>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="화"
+                style="@style/text"/>
 
             <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="수"
-            style="@style/text"/>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="수"
+                style="@style/text"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -121,23 +119,13 @@
             android:id="@+id/calendar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:layout_marginTop="100dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/calendar_view"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                app:layout_constrainedHeight="true"
-                app:spanCount="7"
-                tools:listitem="@layout/list_item_calendar" />
+                android:layout_height="match_parent"/>
         </LinearLayout>
-
     </RelativeLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
 </LinearLayout>

@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.core.util.component1
 import androidx.core.util.component2
 import androidx.fragment.app.DialogFragment
-import com.example.mysec.databinding.ScheduleBinding
+import com.example.mysec.databinding.DialogScheduleBinding
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -19,14 +19,23 @@ import java.util.*
 
 class ScheduleDialogFragment : DialogFragment() {
 
-    private var _binding: ScheduleBinding? = null
+    private var _binding: DialogScheduleBinding? = null
     private val binding get() = _binding!!
-    private lateinit var projectRepository: ProjectRepository
     private lateinit var scheduleDatabaseHelper: ScheduleDatabaseHelper
+
+    // 콜백 인터페이스
+    interface OnScheduleCreatedListener {
+        fun onScheduleCreated(id: Int, title: String, dateRange: String, isOnline: Boolean, isEdit: Boolean)
+    }
+
+    private var listener: OnScheduleCreatedListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         scheduleDatabaseHelper = ScheduleDatabaseHelper(context)
+        // 콜백 인터페이스 구현체 가져오기
+        listener = targetFragment as? OnScheduleCreatedListener
+            ?: throw RuntimeException("$context must implement OnScheduleCreatedListener")
     }
 
     // 프래그먼트의 UI를 생성할 때 호출
@@ -35,8 +44,7 @@ class ScheduleDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = ScheduleBinding.inflate(inflater, container, false)
-        projectRepository = ProjectRepository(requireContext())
+        _binding = DialogScheduleBinding.inflate(inflater, container, false)
 
         // 인수에서 데이터 가져오기
         val title = arguments?.getString("title") ?: ""
@@ -94,7 +102,6 @@ class ScheduleDialogFragment : DialogFragment() {
             .setTitleText("프로젝트 기간 선택")
             .setCalendarConstraints(
                 CalendarConstraints.Builder()
-                    .setValidator(DateValidatorPointForward.now())
                     .build()
             )
             .build()
@@ -107,7 +114,7 @@ class ScheduleDialogFragment : DialogFragment() {
             val dateRangeText = "${dateFormat.format(startDate)} ~ ${dateFormat.format(endDate)}"
 
             binding.dateRangeText2.text = dateRangeText
-            binding.dateRangeText2.setTextColor(resources.getColor(R.color.project_deafult, null))
+            binding.dateRangeText2.setTextColor(resources.getColor(R.color.project_default, null))
         }
 
         dateRangePicker.show(parentFragmentManager, "dateRangePicker")
@@ -121,19 +128,10 @@ class ScheduleDialogFragment : DialogFragment() {
         val isEdit = arguments?.getBoolean("isEdit") ?: false
         val id = arguments?.getInt("id") ?: -1
 
-        // 제목과 날짜 범위가 비어 있지 않은지 확인
         if (title.isNotEmpty() && dateRange.isNotEmpty()) {
-            // ProjectFragment로 전달하여 일정 저장
-            (targetFragment as? ProjectFragment)?.saveSchedule(
-                id,
-                title,
-                dateRange,
-                isOnline,
-                isEdit
-            )
+            listener?.onScheduleCreated(id, title, dateRange, isOnline, isEdit)
             dismiss()
-        }
-        else {
+        } else {
             Toast.makeText(requireContext(), "내용을 모두 입력하세요.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -141,7 +139,21 @@ class ScheduleDialogFragment : DialogFragment() {
     // View가 파괴될 때 호출
     override fun onDestroyView() {
         super.onDestroyView()
-        // 바인딩 해제
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(title: String, dateRange: String, isOnline: Boolean, isEdit: Boolean, id: Int): ScheduleDialogFragment {
+            val fragment = ScheduleDialogFragment()
+            val args = Bundle().apply {
+                putString("title", title)
+                putString("dateRange", dateRange)
+                putBoolean("isOnline", isOnline)
+                putBoolean("isEdit", isEdit)
+                putInt("id", id)
+            }
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:background="@drawable/background_shape"
+    android:backgroundTint="@color/white"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/event_input"
+    <!-- 날짜를 표시할 텍스트 뷰 추가 -->
+    <TextView
+        android:id="@+id/date_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="일정을 입력하세요"
-        android:inputType="text" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="8월 1일 (목)"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="10dp"/>
+
+    <ListView
+        android:id="@+id/event_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/add_event_button"
+        android:layout_below="@+id/date_text_view"
+        android:divider="@color/trans" />
 
     <Button
         android:id="@+id/add_event_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="추가" />
-
-</LinearLayout>
+        android:text="+ 할 일을 추가하세요"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/light_grey"
+        android:textColor="#000000"
+        android:fontFamily="@font/pr" />
+</RelativeLayout>

@@ -6,15 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 
-class ProjectAdapter(context: Context, events: List<String>) : ArrayAdapter<String>(context, 0, events) {
+class ProjectAdapter(context: Context, projects: List<Pair<String, String>>) : ArrayAdapter<Pair<String, String>>(context, 0, projects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.list_item_project, parent, false)
         val projectName = view.findViewById<TextView>(R.id.project_name)
+        val projectDay = view.findViewById<TextView>(R.id.tvDay)
 
-        projectName.text = getItem(position)
+        val project = getItem(position)
+        projectName.text = project?.first
+        projectDay.text = project?.second
 
         return view
     }

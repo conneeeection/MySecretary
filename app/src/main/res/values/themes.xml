@@ -31,17 +31,9 @@
         <item name="android:background">@color/trans</item>
     </style>
 
-    <style name="LineView">
-        <item name="android:background">@color/night_background</item>
-    </style>
-
     <style name="NoSelectionBottomNavigationView" parent="Widget.Design.BottomNavigationView">
         <item name="itemIconTint">@android:color/transparent</item>
         <item name="itemTextColor">@android:color/transparent</item>
-    </style>
-
-    <style name="CustomDialog" parent="Theme.AppCompat.Dialog">
-        <item name="android:background">@drawable/dialog_background</item>
     </style>
 
 </resources>
