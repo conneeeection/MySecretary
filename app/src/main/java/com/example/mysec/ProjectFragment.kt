@@ -13,6 +13,7 @@ import com.example.mysec.databinding.FragmentProjectBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 // 사용자 ID를 저장하기 위한 상수
 private const val ARG_USER_ID = "user_id"
@@ -114,6 +115,9 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
                     binding.projectDate.text = "프로젝트 날짜"
                     Log.d(TAG, "loadProjectDetails: No latest project found")
                 }
+            } catch (e: CancellationException) {
+                // 코루틴 취소 예외 처리
+                Log.e(TAG, "loadProjectDetails: Coroutine was cancelled", e)
             } catch (e: Exception) {
                 showToast("프로젝트 세부 정보를 로드하는 중 오류가 발생했습니다: ${e.message}")
                 Log.e(TAG, "loadProjectDetails: Error = ${e.message}")
@@ -213,6 +217,9 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
                         Log.d(TAG, "updateScheduleList: ScheduleDialogFragment shown for title = $title")
                     }
                 }
+            } catch (e: CancellationException) {
+                // 코루틴 취소 예외 처리
+                Log.e(TAG, "updateScheduleList: Coroutine was cancelled", e)
             } catch (e: Exception) {
                 showToast("스케줄 목록을 업데이트하는 중 오류가 발생했습니다: ${e.message}")
                 Log.e(TAG, "updateScheduleList: Error = ${e.message}")
