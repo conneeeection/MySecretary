@@ -1,59 +1,79 @@
 package com.example.mysec
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+private const val ARG_USER_ID = "user_id"
+private const val TAG = "ListFragment"
 class ListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var dbHelper: DBHelper
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            userId = it.getString(ListFragment.ARG_USER_ID)
+            Log.d(ContentValues.TAG, "User ID: $userId") // ID 확인 로그 추가
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list, container, false)
+        dbHelper = DBHelper(requireContext())
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
+        private const val ARG_USER_ID = "user_id"
+
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(userId: String) =
             ListFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putString(ARG_USER_ID, userId)
                 }
             }
+    }
+
+    // 프래그먼트 뷰 생성
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // fragment_list 레이아웃을 인플레이트하여 뷰 생성
+        val view = inflater.inflate(R.layout.fragment_list, container, false)
+
+        // 프로젝트 생성 버튼을 누르면 팝업창을 표시
+        val createProjectButton = view.findViewById<Button>(R.id.createProject_button)
+        createProjectButton.setOnClickListener {
+            // 팝업 창 표시 메서드 호출
+            showDialog()
+        }
+
+        // 사용자 아이디 가져오기
+        userId = userId ?: dbHelper.getUserId()
+
+        // DB에서 사용자 정보를 가져와서 표시
+        userId?.let {
+            val userInfo = dbHelper.getUserId()
+            Log.d("ProjectFragment", "User Id: $userId") // 로그 추가
+        }
+
+        // 생성된 뷰 반환
+        return view
+    }
+
+    // 팝업 창 표시 메서드
+    private fun showDialog() {
+        // 사용자가 입력한 ID를 얻어서 ProjectFragment에 전달
+        val dialogFragment = ListDialogFragment().apply {
+            // 새로운 인스턴스 생성과 함께 사용자 ID 전달
+            arguments = Bundle().apply {
+                putString(ARG_USER_ID, userId)
+            }
+        }
+        dialogFragment.show(parentFragmentManager, "ListDialogFragment")
     }
 }

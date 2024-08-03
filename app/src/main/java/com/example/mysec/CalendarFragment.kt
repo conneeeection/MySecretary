@@ -63,7 +63,7 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
 
         val events = userId?.let { dbHelper?.getAllEvents(it) } ?: emptyList()
         userId?.let {
-            calendarAdapter = CalendarAdapter(requireContext(), date, events.toMutableList(), it)
+            calendarAdapter = CalendarAdapter(requireContext(), date, events.toMutableList())
         }
 
         recyclerView.adapter = calendarAdapter
@@ -108,13 +108,12 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
             val fragment = CalendarFragment()
             val args = Bundle().apply {
                 putLong("date", date.time)
-                putString("user_id", userId)  // userId를 추가합니다.
+                putString("user_id", userId)
             }
             fragment.arguments = args
             return fragment
         }
     }
-
 
     private fun showEventDialog(day: Int) {
         // 현재 Calendar 객체에서 날짜를 계산하여 올바른 월을 설정합니다.

@@ -14,8 +14,7 @@ import java.util.*
 class CalendarAdapter(
     private val context: Context,
     private var date: Date,
-    private var events: MutableList<Event>,
-    private val userId: String // userId를 추가
+    private var events: MutableList<Event>
 ) : RecyclerView.Adapter<CalendarAdapter.CalendarItemHolder>() {
 
     private var dataList: ArrayList<Int> = arrayListOf()

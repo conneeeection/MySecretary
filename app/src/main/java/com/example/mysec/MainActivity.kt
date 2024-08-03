@@ -1,5 +1,6 @@
 package com.example.mysec
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
@@ -10,10 +11,13 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import com.example.mysec.databinding.ActivityMainBinding
-import java.util.Date
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ListDialogFragment.OnProjectCreatedListener {
 
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -21,12 +25,22 @@ class MainActivity : AppCompatActivity() {
 
     private var userId: String? = null
 
+    // SharedPreferences에 사용할 파일 이름과 키 정의
+    private val PREFS_NAME = "MyPrefs"
+    private val KEY_PROJECT_CREATED = "projectCreated"
+
+    // 데이터베이스 헬퍼 인스턴스
+    private lateinit var dbHelper: ProjectDatabaseHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         // 인텐트에서 사용자 ID 가져오기
         userId = intent.getStringExtra(ARG_USER_ID)
+
+        // 데이터베이스 헬퍼 초기화
+        dbHelper = ProjectDatabaseHelper(this)
 
         // 툴바 설정
         setSupportActionBar(binding.toolbar)
@@ -49,10 +63,6 @@ class MainActivity : AppCompatActivity() {
                     .commit()
             }
         }
-    }
-
-    companion object {
-        const val ARG_USER_ID = "user_id"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -106,16 +116,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
-    private fun showEventDialog(date: Date, day: Int) {
-        userId?.let { id ->
-            val eventDialogFragment = EventDialogFragment.newInstance(date, day, id)
-            eventDialogFragment.show(supportFragmentManager, "EventDialogFragment")
-        } ?: run {
-            Toast.makeText(this, "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -123,25 +125,111 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.fragment_list -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, ListFragment())
-                        .commit()
+                    lifecycleScope.launch {
+                        try {
+                            if (userId.isNullOrEmpty()) {
+                                showToast("사용자 아이디가 설정되지 않았습니다.")
+                                return@launch
+                            }
+
+                            // 사용자 ID를 기반으로 프로젝트 생성 여부 확인
+                            val hasProjects = hasCreatedProjects(userId!!)
+
+                            val fragment = if (hasProjects) {
+                                ProjectFragment.newInstance(userId!!)
+                            } else {
+                                ListFragment.newInstance(userId!!)
+                            }
+
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_container, fragment)
+                                .addToBackStack(null)
+                                .commit()
+
+                        } catch (e: Exception) {
+                            showToast("오류가 발생했습니다: ${e.message}")
+                        }
+                    }
                     true
                 }
+
                 R.id.fragment_home -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_container, HomeFragment())
                         .commit()
                     true
                 }
+
                 R.id.fragment_map -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_container, MapFragment())
                         .commit()
                     true
                 }
+
                 else -> false
             }
         }
+    }
+
+    private suspend fun hasCreatedProjects(userId: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(
+                ProjectDatabaseHelper.TABLE_NAME,
+                arrayOf("COUNT(*)"),
+                "${ProjectDatabaseHelper.COLUMN_USER_ID} = ?",
+                arrayOf(userId),
+                null,
+                null,
+                null
+            )
+            val projectExists = cursor.moveToFirst() && cursor.getInt(0) > 0
+            cursor.close()
+            projectExists
+        }
+    }
+
+    // ListDialogFragment.OnProjectCreatedListener 인터페이스 구현
+    override fun onProjectCreated() {
+        // 프로젝트가 생성된 경우 상태를 저장하고 ProjectFragment로 교체
+        setProjectCreated(true)
+        if (userId != null) {
+            val fragment = ProjectFragment.newInstance(userId!!)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    private fun setProjectCreated(created: Boolean) {
+        // SharedPreferences에 프로젝트 생성 상태 저장
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putBoolean(KEY_PROJECT_CREATED, created)
+            apply()
+        }
+    }
+
+    fun showProjectFragment(projectName: String, projectDateRange: String) {
+        val fragment = ProjectFragment().apply {
+            arguments = Bundle().apply {
+                putString("project_title", projectName)
+                putString("project_date_range", projectDateRange)
+            }
+        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        const val ARG_USER_ID = "user_id"
     }
 }

@@ -65,7 +65,11 @@ dependencies {
     // 네이버 지도 위치 추적
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
-    // ViewModel 및 LiveData 관련 종속성
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    // Material Components for Android 라이브러리 추가
+    implementation("com.google.android.material:material:1.12.0")
+
+    // SQLite 종속성 추가
+    implementation("androidx.sqlite:sqlite:2.4.0")
+    implementation("androidx.sqlite:sqlite-framework:2.4.0")
+    implementation("androidx.sqlite:sqlite-ktx:2.4.0")
 }
