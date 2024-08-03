@@ -9,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 
-private const val ARG_USER_ID = "user_id"
-private const val TAG = "ListFragment"
 class ListFragment : Fragment() {
     private lateinit var dbHelper: DBHelper
     private var userId: String? = null
