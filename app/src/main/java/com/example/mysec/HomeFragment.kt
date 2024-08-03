@@ -97,6 +97,7 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
         initView()
     }
 
+    // 초기 뷰
     private fun initView() {
         val calendarPageAdapter = CalendarPageAdapter(this, "userId") // userId를 전달
         viewPager.adapter = calendarPageAdapter
@@ -113,7 +114,7 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
         })
     }
 
-
+    // 날짜 업데이트
     private fun updateYearMonthText(date: Date) {
         val sdf = SimpleDateFormat("yyyy년 MM월", Locale.getDefault())
         calendarYearMonthText.text = sdf.format(date)
@@ -220,6 +221,7 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
         }
     }
 
+    // 월 변경시
     override fun onMonthChanged(newDate: Date) {
         // 달력 스크롤 시 년/월 텍스트 업데이트
         updateYearMonthText(newDate)

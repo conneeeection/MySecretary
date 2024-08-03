@@ -22,7 +22,7 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        // 데이터베이스 헬퍼 초기화
+        // DB 헬퍼 초기화
         DB = DBHelper(this)
 
         nameField = findViewById(R.id.name_field)
@@ -35,7 +35,7 @@ class SignupActivity : AppCompatActivity() {
         // 아이디 중복확인
         btnCheckIdReg.setOnClickListener {
             val user = idField.text.toString()
-            val idPattern = "^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z[0-9]]{6,15}$"
+            val idPattern = "^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z[0-9]]{6,15}$"    // 영문/숫자 6~15자
 
             if (user.isEmpty()) {
                 Toast.makeText(
@@ -64,7 +64,7 @@ class SignupActivity : AppCompatActivity() {
             val pass = passwordField.text.toString()
             val repass = passwordCheckField.text.toString()
             val name = nameField.text.toString()
-            val pwPattern = "^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z[0-9]]{8,15}$"
+            val pwPattern = "^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z[0-9]]{8,15}$"    // 영문/숫자 8~15자
 
             // 사용자 입력이 비었을 때
             if (user.isEmpty() || pass.isEmpty() || repass.isEmpty() || name.isEmpty()) {

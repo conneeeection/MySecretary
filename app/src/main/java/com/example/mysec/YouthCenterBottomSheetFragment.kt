@@ -12,11 +12,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naver.maps.geometry.LatLng
 import kotlin.math.*
 
-private val LatLng.second: Unit
-    get() {
-        TODO("Not yet implemented")
-    }
-
 class YouthCenterBottomSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var youthCenters: List<MapFragment.YouthCenter>

@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -14,9 +13,12 @@ import com.example.mysec.databinding.FragmentProjectBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
-private const val ARG_USER_ID = "user_id" // 사용자 ID를 저장하기 위한 상수
-private const val TAG = "ProjectFragment" // 로그 태그
+// 사용자 ID를 저장하기 위한 상수
+private const val ARG_USER_ID = "user_id"
+// 로그 태그
+private const val TAG = "ProjectFragment"
 
 class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedListener {
 
@@ -33,11 +35,13 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Fragment의 인수로부터 사용자 ID를 가져옴
         arguments?.let {
-            userId = it.getString(ARG_USER_ID) // 사용자 ID를 인수로 받기
+            userId = it.getString(ARG_USER_ID)
             Log.d(TAG, "User ID: $userId")
         }
-        dbHelper = DBHelper(requireContext()) // DBHelper 초기화
+        // DBHelper 초기화
+        dbHelper = DBHelper(requireContext())
     }
 
     companion object {
@@ -61,9 +65,11 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
         scheduleDatabaseHelper = ScheduleDatabaseHelper(requireContext())
         projectDatabaseHelper = ProjectDatabaseHelper(requireContext())
 
-        userId = userId ?: dbHelper.getUserId() // 사용자 ID 설정
+        // 사용자 ID 설정
+        userId = userId ?: dbHelper.getUserId()
         Log.d(TAG, "onCreateView: userId = $userId")
 
+        // 사용자 ID가 설정되지 않은 경우
         if (userId.isNullOrEmpty()) {
             showToast("사용자 아이디가 설정되지 않았습니다.")
             Log.e(TAG, "onCreateView: 사용자 아이디가 설정되지 않았습니다.")
@@ -81,6 +87,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
         return binding.root
     }
 
+    // 프로젝트 정보 로드
     private fun loadProjectDetails() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -100,13 +107,20 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
                     val projectInitials = withContext(Dispatchers.IO) {
                         projectRepository.getLatestProjectInitials(userId!!)
                     }
+                    Log.d(TAG, "loadProjectDetails: Project Initials = $projectInitials")
                     // 두 글자를 버튼에 출력
                     binding.projectBtn.text = projectInitials ?: "이름"
+
                 } ?: run {
+                    // 최신 프로젝트가 없을 경우 기본 값 설정
                     binding.projectTitle.text = "프로젝트 제목"
                     binding.projectDate.text = "프로젝트 날짜"
+                    binding.projectBtn.text = "이름" // 기본 값 설정
                     Log.d(TAG, "loadProjectDetails: No latest project found")
                 }
+            } catch (e: CancellationException) {
+                // 코루틴 취소 예외 처리
+                Log.e(TAG, "loadProjectDetails: Coroutine was cancelled", e)
             } catch (e: Exception) {
                 showToast("프로젝트 세부 정보를 로드하는 중 오류가 발생했습니다: ${e.message}")
                 Log.e(TAG, "loadProjectDetails: Error = ${e.message}")
@@ -144,6 +158,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
         }
     }
 
+    // 공유 기능
     private fun shareApp() {
         val testLink = "https://github.com/conneeeection/MySecretary"   // 배포가 안되어 있어서 깃허브로 링크!
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -154,6 +169,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
         startActivity(Intent.createChooser(shareIntent, null))
     }
 
+    // 일정 목록 업데이트
     private fun updateScheduleList() {
         viewLifecycleOwner.lifecycleScope.launch {
             Log.d(TAG, "updateScheduleList: Start")
@@ -164,6 +180,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
                     return@launch
                 }
 
+                // 스케줄 목록 가져오기
                 val schedules = withContext(Dispatchers.IO) {
                     val db = scheduleDatabaseHelper.readableDatabase
                     val cursor = db.query(
@@ -187,10 +204,12 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
 
                 Log.d(TAG, "updateScheduleList: ScheduleList = $schedules")
 
+                // 일정 목록을 어댑터에 설정
                 binding.apply {
                     val adapter = ProjectAdapter(requireContext(), schedules)
                     projectContainer.adapter = adapter
 
+                    // 아이템 클릭 리스너 설정
                     projectContainer.setOnItemClickListener { _, _, position, _ ->
                         val (title, dateRange) = schedules[position]
                         val scheduleDialog = ScheduleDialogFragment.newInstance(
@@ -201,6 +220,9 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
                         Log.d(TAG, "updateScheduleList: ScheduleDialogFragment shown for title = $title")
                     }
                 }
+            } catch (e: CancellationException) {
+                // 코루틴 취소 예외 처리
+                Log.e(TAG, "updateScheduleList: Coroutine was cancelled", e)
             } catch (e: Exception) {
                 showToast("스케줄 목록을 업데이트하는 중 오류가 발생했습니다: ${e.message}")
                 Log.e(TAG, "updateScheduleList: Error = ${e.message}")
@@ -209,7 +231,14 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
         }
     }
 
-    override fun onScheduleCreated(id: Int, title: String, dateRange: String, isOnline: Boolean, isEdit: Boolean) {
+    // 스케줄이 생성 시 호출
+    override fun onScheduleCreated(
+        id: Int,
+        title: String,
+        dateRange: String,
+        isOnline: Boolean,
+        isEdit: Boolean
+    ) {
         Log.d(TAG, "onScheduleCreated: Start, id = $id, title = $title, dateRange = $dateRange, isOnline = $isOnline, isEdit = $isEdit")
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -221,14 +250,17 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
 
                 withContext(Dispatchers.IO) {
                     if (isEdit && id != -1) {
+                        // 스케줄 업데이트
                         val updatedRows = scheduleDatabaseHelper.updateSchedule(id, title, dateRange, isOnline)
                         if (updatedRows == 0) {
+                            // 업데이트 실패 시 새 스케줄 삽입
                             scheduleDatabaseHelper.insertSchedule(title, dateRange, isOnline, userId!!)
                             Log.d(TAG, "onScheduleCreated: Schedule updated and new entry inserted")
                         } else {
                             Log.d(TAG, "onScheduleCreated: Schedule updated successfully")
                         }
                     } else {
+                        // 새 스케줄 삽입
                         scheduleDatabaseHelper.insertSchedule(title, dateRange, isOnline, userId!!)
                         Log.d(TAG, "onScheduleCreated: New schedule inserted")
                     }
