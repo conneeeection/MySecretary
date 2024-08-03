@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_EXPRESSION")
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -43,13 +41,12 @@ android {
 }
 
 dependencies {
-
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.13.1") // 최신 androidx.core 사용
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation ("androidx.viewpager2:viewpager2:1.0.0")
-    
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+
     // 날씨 정보
     implementation("com.loopj.android:android-async-http:1.4.11")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
