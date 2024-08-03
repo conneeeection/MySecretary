@@ -15,13 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val ARG_USER_ID = "user_id"
-private const val TAG = "ProjectFragment"
+private const val ARG_USER_ID = "user_id" // 사용자 ID를 저장하기 위한 상수
+private const val TAG = "ProjectFragment" // 로그 태그
 
 class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedListener {
 
     private var _binding: FragmentProjectBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding!! // 바인딩 객체의 비공식 참조
 
     private lateinit var projectRepository: ProjectRepository
     private lateinit var scheduleDatabaseHelper: ScheduleDatabaseHelper
@@ -34,10 +34,10 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getString(ARG_USER_ID)
+            userId = it.getString(ARG_USER_ID) // 사용자 ID를 인수로 받기
             Log.d(TAG, "User ID: $userId")
         }
-        dbHelper = DBHelper(requireContext())
+        dbHelper = DBHelper(requireContext()) // DBHelper 초기화
     }
 
     companion object {
@@ -45,7 +45,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
         fun newInstance(userId: String) =
             ProjectFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_USER_ID, userId)
+                    putString(ARG_USER_ID, userId) // 사용자 ID를 Bundle에 저장
                 }
             }
     }
@@ -61,7 +61,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
         scheduleDatabaseHelper = ScheduleDatabaseHelper(requireContext())
         projectDatabaseHelper = ProjectDatabaseHelper(requireContext())
 
-        userId = userId ?: dbHelper.getUserId()
+        userId = userId ?: dbHelper.getUserId() // 사용자 ID 설정
         Log.d(TAG, "onCreateView: userId = $userId")
 
         if (userId.isNullOrEmpty()) {
@@ -70,7 +70,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
             return binding.root
         }
 
-        // 프로젝트 세부 정보 로드 및 표시
+        // 프로젝트 세부 정보와 일정 목록을 로드
         loadProjectDetails()
         updateScheduleList()
 
@@ -89,7 +89,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
                     projectRepository.getLatestProject(userId!!)
                 }
 
-                // 최신 프로젝트가 있는 경우
+                // 최신 프로젝트가 있을 경우
                 latestProject?.let { project ->
                     currentProjectId = project.id // Int 타입으로 할당
                     binding.projectTitle.text = project.title
@@ -145,7 +145,7 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
     }
 
     private fun shareApp() {
-        val testLink = "https://github.com/conneeeection/MySecretary"
+        val testLink = "https://github.com/conneeeection/MySecretary"   // 배포가 안되어 있어서 깃허브로 링크!
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, "프로젝트 일정 공유해요! 다음 링크에서 다운로드할 수 있습니다!: $testLink")
@@ -251,6 +251,6 @@ class ProjectFragment : Fragment(), ScheduleDialogFragment.OnScheduleCreatedList
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        _binding = null // 바인딩 객체 해제
     }
 }

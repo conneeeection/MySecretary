@@ -54,22 +54,4 @@ class ScheduleDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
         }
         return db.update(TABLE_NAME, values, "$COLUMN_ID=?", arrayOf(id.toString()))
     }
-
-    fun getScheduleId(title: String): Int {
-        val db = readableDatabase
-        val cursor = db.query(
-            TABLE_NAME,
-            arrayOf(COLUMN_ID),
-            "$COLUMN_TITLE = ?",
-            arrayOf(title),
-            null,
-            null,
-            null
-        )
-        return if (cursor.moveToFirst()) {
-            cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
-        } else {
-            -1
-        }.also { cursor.close() }
-    }
 }
