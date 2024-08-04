@@ -3,6 +3,7 @@ package com.example.mysec
 import DateCalendar
 import android.content.Context
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mysec.Event
 import java.util.*
+
+// 로그 태그
+private const val TAG = "CalendarAdapter"
 
 // RecyclerView Adapter를 상속받아 달력 항목을 표시하는 어댑터 클래스
 class CalendarAdapter(
@@ -22,6 +26,7 @@ class CalendarAdapter(
     private var dateCalendar: DateCalendar = DateCalendar(date) // 날짜 관련 정보를 처리하는 객체
 
     init {
+        Log.d(TAG, "CalendarAdapter initialized with date: $date")
         updateDate(date) // 초기 날짜 데이터 설정
     }
 
@@ -32,6 +37,7 @@ class CalendarAdapter(
         dateCalendar.initBaseCalendar()
         dataList = dateCalendar.dateList
         notifyDataSetChanged() // 데이터 변경 알림
+        Log.d(TAG, "Date updated to: $date")
     }
 
     // 이벤트 목록 업데이트 메서드
@@ -39,6 +45,7 @@ class CalendarAdapter(
         events.clear()
         events.addAll(newEvents)
         notifyDataSetChanged() // 데이터 변경 알림
+        Log.d(TAG, "Events updated: $events")
     }
 
     // 클릭 이벤트 리스너 인터페이스

@@ -45,6 +45,8 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
     private lateinit var mLocationManager: LocationManager
     private lateinit var mLocationListener: LocationListener
 
+    private var userId: String? = null
+
     companion object {
         // HomeFragment의 인스턴스
         var instance: HomeFragment? = null
@@ -55,6 +57,14 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
         const val MIN_TIME: Long = 5000
         const val MIN_DISTANCE: Float = 1000F
         const val WEATHER_REQUEST: Int = 102
+
+        fun newInstance(userId: String): HomeFragment {
+            return HomeFragment().apply {
+                arguments = Bundle().apply {
+                    putString("USER_ID", userId)
+                }
+            }
+        }
     }
 
     // 프래그먼트가 컨텍스트에 첨부될 때 호출
@@ -68,6 +78,10 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+        arguments?.let {
+            userId = it.getString("USER_ID")
+            Log.d(TAG, "User ID from arguments: $userId")
+        }
     }
 
     // 프래그먼트의 뷰를 생성
@@ -99,11 +113,10 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
 
     // 초기 뷰
     private fun initView() {
-        val calendarPageAdapter = CalendarPageAdapter(this, "userId") // userId를 전달
+        val calendarPageAdapter = CalendarPageAdapter(this, userId ?: "defaultUserId")
         viewPager.adapter = calendarPageAdapter
         viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         viewPager.setCurrentItem(CalendarPageAdapter.START_POSITION, false)
-
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -112,6 +125,7 @@ class HomeFragment : Fragment(), CalendarFragment.OnMonthChangeListener {
                 updateYearMonthText(calendar.time)
             }
         })
+        Log.d("HomeFragment", "User ID in initView: $userId")
     }
 
     // 날짜 업데이트

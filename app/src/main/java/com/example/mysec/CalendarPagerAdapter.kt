@@ -1,8 +1,12 @@
 package com.example.mysec
 
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import java.util.Calendar
+
+// 로그 태그
+private const val TAG = "CalendarPagerAdapter"
 
 // ViewPager2에 사용할 어댑터
 class CalendarPageAdapter(
@@ -11,20 +15,16 @@ class CalendarPageAdapter(
 ) : FragmentStateAdapter(fragment) {
 
     companion object {
-        // ViewPager의 중앙 위치를 시작 위치로 설정
         const val START_POSITION = Int.MAX_VALUE / 2
     }
 
-    // 전체 아이템 개수 반환 (무한 스크롤을 위해 매우 큰 값으로 설정)
     override fun getItemCount(): Int = Int.MAX_VALUE
 
-    // 현재 위치에 해당하는 CalendarFragment 생성
     override fun createFragment(position: Int): Fragment {
-        // 현재 시간에서 위치를 기준으로 월을 계산
         val calendar = Calendar.getInstance().apply {
             add(Calendar.MONTH, position - START_POSITION)
         }
-        // CalendarFragment를 생성하고 userId를 전달
+        Log.d("CalendarPageAdapter", "Creating CalendarFragment for position: $position with date: ${calendar.time} and userId: $userId")
         return CalendarFragment.newInstance(calendar.time, userId)
     }
 }

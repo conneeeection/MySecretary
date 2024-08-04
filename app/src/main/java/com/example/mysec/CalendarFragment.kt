@@ -2,6 +2,7 @@ package com.example.mysec
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,11 +24,12 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
     private lateinit var calendarAdapter: CalendarAdapter
     private var calendar: Calendar = Calendar.getInstance() // 현재 달력 날짜
     private var monthChangeListener: OnMonthChangeListener? = null // 월 변경 리스너
-    internal var userId: String? = null // 사용자 아이디
+    private var userId: String? = null // 사용자 아이디
     private var dbHelper: DBHelper? = null // DB 헬퍼
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Log.d("CalendarFragment", "onAttach called")
         // OnMonthChangeListener를 찾아 설정
         monthChangeListener = when {
             context is OnMonthChangeListener -> context
@@ -38,9 +40,11 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("CalendarFragment", "onCreate called")
         dbHelper = DBHelper(requireContext()) // DB 헬퍼 초기화
         arguments?.let {
             userId = it.getString("user_id") // 사용자 아이디 가져오기
+            Log.d("CalendarFragment", "userId: $userId")
         }
     }
 
@@ -48,11 +52,13 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("CalendarFragment", "onCreateView called")
         return inflater.inflate(R.layout.fragment_calendar, container, false) // 레이아웃 설정
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("CalendarFragment", "onViewCreated called")
 
         recyclerView = view.findViewById(R.id.calendar_view)
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 7) // 7열 그리드 레이아웃 설정
@@ -63,18 +69,18 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
         // 전달받은 날짜 또는 현재 날짜로 달력 설정
         val date = Date(arguments?.getLong("date") ?: System.currentTimeMillis())
         calendar.time = date
+        Log.d("CalendarFragment", "Calendar date set to: ${calendar.time}")
 
         // 이벤트 목록 가져오기
         val events = userId?.let { dbHelper?.getAllEvents(it) } ?: emptyList()
-        userId?.let {
-            calendarAdapter = CalendarAdapter(requireContext(), date, events.toMutableList())
-        }
-
+        Log.d("CalendarFragment", "Fetched events: $events")
+        calendarAdapter = CalendarAdapter(requireContext(), date, events.toMutableList())
         recyclerView.adapter = calendarAdapter
 
         // 날짜 항목 클릭 리스너 설정
         calendarAdapter.itemClick = object : CalendarAdapter.ItemClick {
             override fun onClick(view: View, position: Int, day: Int) {
+                Log.d("CalendarFragment", "Date clicked: $day")
                 showEventDialog(day)
             }
         }
@@ -99,6 +105,7 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
                         }
                         calendar.set(Calendar.MONTH, newMonth)
                         calendar.set(Calendar.DATE, 1)
+                        Log.d("CalendarFragment", "Month changed to: ${calendar.time}")
                         calendarAdapter.updateDate(calendar.time)
                         monthChangeListener?.onMonthChanged(calendar.time) // 월 변경 리스너 호출
                         updateEventList() // 이벤트 목록 업데이트
@@ -125,12 +132,13 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
 
     // 선택한 날짜의 이벤트 다이얼로그를 표시하는 메서드
     private fun showEventDialog(day: Int) {
+        Log.d("CalendarFragment", "Showing event dialog for day: $day with userId: $userId")
         val selectedDate = Calendar.getInstance().apply {
             time = calendar.time
             set(Calendar.DAY_OF_MONTH, day)
         }.time
 
-        val eventDialogFragment = EventDialogFragment.newInstance(selectedDate, day, userId!!).apply {
+        val eventDialogFragment = EventDialogFragment.newInstance(userId ?: "", selectedDate, day).apply {
             setOnEventAddedListener(this@CalendarFragment)
         }
         eventDialogFragment.show(parentFragmentManager, eventDialogFragment.tag)
@@ -138,8 +146,10 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
 
     // 이벤트 목록을 업데이트하는 메서드
     private fun updateEventList() {
+        Log.d("CalendarFragment", "Updating event list")
         userId?.let {
             val events = dbHelper?.getAllEvents(it) ?: emptyList()
+            Log.d("CalendarFragment", "Events to update: $events")
             calendarAdapter.updateEvents(events)
             recyclerView.post {
                 recyclerView.adapter?.notifyDataSetChanged()
@@ -150,6 +160,7 @@ class CalendarFragment : Fragment(), EventDialogFragment.OnEventAddedListener {
 
     // 이벤트 추가 후 호출되는 메서드
     override fun onEventAdded() {
+        Log.d("CalendarFragment", "Event added, updating list")
         updateEventList() // 이벤트 목록 갱신
     }
 }

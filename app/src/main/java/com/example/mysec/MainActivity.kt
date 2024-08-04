@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), ListDialogFragment.OnProjectCreatedLis
             // 로그인 후 첫 화면으로 기본 홈 화면을 설정
             if (savedInstanceState == null) {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, HomeFragment())
+                    .replace(R.id.main_container, HomeFragment.newInstance(userId!!))
                     .commit()
             }
         }
@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity(), ListDialogFragment.OnProjectCreatedLis
 
                 R.id.fragment_home -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, HomeFragment())
+                        .replace(R.id.main_container, HomeFragment.newInstance(userId!!))
                         .commit()
                     true
                 }
